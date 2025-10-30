@@ -6,75 +6,85 @@ Date: 10/21/2025
 AI Usage:
 """
 
-
-def calculate_stats(character_class):
+def calculate_stats(character_class, level):
     """
-    Return character stats based on class name.
+    Return character stats based on class name and level.
     Each class has different strengths in strength, agility, and intelligence.
     """
     if character_class == "Warrior":
-        return {"strength": 15, "agility": 8, "intelligence": 5}
+        stats = {"strength": 15, "agility": 8, "intelligence": 5}
     elif character_class == "Mage":
-        return {"strength": 5, "agility": 10, "intelligence": 15}
+        stats = {"strength": 5, "agility": 10, "intelligence": 15}
     elif character_class == "Rogue":
-        return {"strength": 8, "agility": 15, "intelligence": 7}
+        stats = {"strength": 8, "agility": 15, "intelligence": 7}
     elif character_class == "Cleric":
-        return {"strength": 7, "agility": 7, "intelligence": 14}
+        stats = {"strength": 7, "agility": 7, "intelligence": 14}
     else:
-        # Invalid class → return None so tests detect it properly
-        return None
+        return None  # invalid class
+
+    # Slightly increase stats with level
+    for key in stats:
+        stats[key] += (level - 1) * 2
+
+    return stats
 
 
 def create_character(name, character_class):
     """
     Create and return a character dictionary with:
-      - name: character's name (string)
-      - class: character's class (string)
-      - stats: dictionary of stats (from calculate_stats)
-    Returns None if the class is invalid.
+      - name
+      - class
+      - level (starts at 1)
+      - strength, agility, intelligence
     """
-    stats = calculate_stats(character_class)
+    level = 1
+    stats = calculate_stats(character_class, level)
 
     if stats is None:
         return None
 
     character = {
         "name": name,
-        "class": character_class,  # must match test key exactly
-        "stats": stats
+        "class": character_class,
+        "level": level,
+        "strength": stats["strength"],
+        "agility": stats["agility"],
+        "intelligence": stats["intelligence"]
     }
 
     return character
 
-def save_character(character, filename):
-    import os
 
-    # Check valid input
+def save_character(character, filename):
+    """
+    Save a character dictionary to a text file.
+    Returns True if successful, False otherwise.
+    """
+    # basic validation
     if not isinstance(character, dict) or not filename:
         return False
 
-    # Check directory validity (prevents FileNotFoundError)
-    directory = os.path.dirname(filename)
-    if directory and not os.path.exists(directory):
-        return False
+    # check that all required keys exist
+    required_keys = ["name", "class", "level", "strength", "agility", "intelligence"]
+    for key in required_keys:
+        if key not in character:
+            return False
 
-    # All checks passed — now safely write
+    # write data
     file = open(filename, "w")
-    file.write(f"Character Name: {character['name']}\n")
-    file.write(f"Class: {character['class']}\n")
-    file.write(f"Level: {character['level']}\n")
-    file.write(f"Strength: {character['strength']}\n")
-    file.write(f"Magic: {character['magic']}\n")
-    file.write(f"Health: {character['health']}\n")
-    file.write(f"Gold: {character['gold']}\n")
+    for key in required_keys:
+        file.write(f"{key}: {character[key]}\n")
     file.close()
 
     return True
 
 
 def load_character(filename):
+    """
+    Load character information from a file and return a dictionary.
+    Returns None if the file cannot be read.
+    """
     import os
-
     if not os.path.exists(filename):
         return None
 
@@ -87,8 +97,7 @@ def load_character(filename):
         parts = line.strip().split(": ")
         if len(parts) == 2:
             key, value = parts
-            key = key.lower().replace("character name", "name")
-            if key in ["level", "strength", "magic", "health", "gold"]:
+            if key in ["level", "strength", "agility", "intelligence"]:
                 value = int(value)
             character[key] = value
 
@@ -96,42 +105,27 @@ def load_character(filename):
 
 
 def display_character(character):
+    """
+    Display character information neatly.
+    """
     print("=== CHARACTER SHEET ===")
     print(f"Name: {character['name']}")
     print(f"Class: {character['class']}")
     print(f"Level: {character['level']}")
     print(f"Strength: {character['strength']}")
-    print(f"Magic: {character['magic']}")
-    print(f"Health: {character['health']}")
-    print(f"Gold: {character['gold']}")
+    print(f"Agility: {character['agility']}")
+    print(f"Intelligence: {character['intelligence']}")
     print("=======================")
-
-
-def level_up(character):
-    character["level"] += 1
-    strength, magic, health = calculate_stats(character["class"], character["level"])
-    character["strength"] = strength
-    character["magic"] = magic
-    character["health"] = health
 
 
 if __name__ == "__main__":
     name = input("Enter your character's name: ")
     character_class = input("Choose your class (Warrior, Mage, Rogue, Cleric): ")
     new_character = create_character(name, character_class)
-    print("=== CHARACTER CREATOR ===")
-    display_character(new_character)
 
-    # Save to file
-    save_character(new_character, "my_character.txt")
-
-    # Load back
-    loaded = load_character("my_character.txt")
-    if loaded is not None:
-        print("\nLoaded from file:")
-        display_character(loaded)
-
-    # Level up example
-    print("\nLeveling up...")
-    level_up(new_character)
-    display_character(new_character)
+    if new_character is None:
+        print("Invalid class entered!")
+    else:
+        display_character(new_character)
+        save_character(new_character, "my_character.txt")
+        print("Character saved successfully.")
