@@ -7,50 +7,44 @@ AI Usage:
 """
 
 
-def create_character(name, character_class):
-    level = 1  # FIX: define level before using it
-
-    strength, magic, health = calculate_stats(character_class, level)
-
-    new_character = {
-        "name": name,
-        "class": character_class.lower(),
-        "level": level,
-        "strength": strength,
-        "magic": magic,
-        "health": health,
-        "gold": 100
-    }
-    return new_character
-
-
-def calculate_stats(character_class, level):
-    strength = 10
-    magic = 4
-    health = 10
-
-    if character_class.lower() == "warrior":
-        strength += 6
-        magic += 0
-        health += 2
-    elif character_class.lower() == "mage":
-        strength += 2
-        magic += 10
-        health += 4
-    elif character_class.lower() == "rogue":
-        strength += 2
-        magic += 3
-        health += 1
-    elif character_class.lower() == "cleric":
-        strength += 1
-        magic += 4
-        health += 1
+def calculate_stats(character_class):
+    """
+    Return character stats based on class name.
+    Each class has different strengths in strength, agility, and intelligence.
+    """
+    if character_class == "Warrior":
+        return {"strength": 15, "agility": 8, "intelligence": 5}
+    elif character_class == "Mage":
+        return {"strength": 5, "agility": 10, "intelligence": 15}
+    elif character_class == "Rogue":
+        return {"strength": 8, "agility": 15, "intelligence": 7}
+    elif character_class == "Cleric":
+        return {"strength": 7, "agility": 7, "intelligence": 14}
     else:
-        print("Invalid class! Defaulting to Warrior.")
-        return calculate_stats("warrior", level)
+        # Invalid class → return None so tests detect it properly
+        return None
 
-    return strength, magic, health
 
+def create_character(name, character_class):
+    """
+    Create and return a character dictionary with:
+      - name: character's name (string)
+      - class: character's class (string)
+      - stats: dictionary of stats (from calculate_stats)
+    Returns None if the class is invalid.
+    """
+    stats = calculate_stats(character_class)
+
+    if stats is None:
+        return None
+
+    character = {
+        "name": name,
+        "class": character_class,  # must match test key exactly
+        "stats": stats
+    }
+
+    return character
 
 def save_character(character, filename):
     import os
