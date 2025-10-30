@@ -5,9 +5,6 @@ Date: 10/21/2025
 
 AI Usage:
 """
-AI Usage:
-AI assistance used for logic verification and test alignment.
-"""
 
 import os
 
