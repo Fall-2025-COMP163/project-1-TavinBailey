@@ -12,21 +12,21 @@ def calculate_stats(character_class, level):
     Each class has different strengths in strength, agility, and intelligence.
     """
     if character_class == "Warrior":
-        stats = {"strength": 15, "agility": 8, "intelligence": 5}
+        base = {"strength": 15, "agility": 8, "intelligence": 5}
     elif character_class == "Mage":
-        stats = {"strength": 5, "agility": 10, "intelligence": 15}
+        base = {"strength": 5, "agility": 10, "intelligence": 15}
     elif character_class == "Rogue":
-        stats = {"strength": 8, "agility": 15, "intelligence": 7}
+        base = {"strength": 8, "agility": 15, "intelligence": 7}
     elif character_class == "Cleric":
-        stats = {"strength": 7, "agility": 7, "intelligence": 14}
+        base = {"strength": 7, "agility": 7, "intelligence": 14}
     else:
         return None  # invalid class
 
-    # Slightly increase stats with level
-    for key in stats:
-        stats[key] += (level - 1) * 2
+    # increase slightly with level
+    for key in base:
+        base[key] += (level - 1) * 2
 
-    return stats
+    return base
 
 
 def create_character(name, character_class):
@@ -34,7 +34,7 @@ def create_character(name, character_class):
     Create and return a character dictionary with:
       - name
       - class
-      - level (starts at 1)
+      - level
       - strength, agility, intelligence
     """
     level = 1
@@ -57,22 +57,19 @@ def create_character(name, character_class):
 
 def save_character(character, filename):
     """
-    Save a character dictionary to a text file.
+    Save a character dictionary to a file.
     Returns True if successful, False otherwise.
     """
-    # basic validation
     if not isinstance(character, dict) or not filename:
         return False
 
-    # check that all required keys exist
-    required_keys = ["name", "class", "level", "strength", "agility", "intelligence"]
-    for key in required_keys:
+    required = ["name", "class", "level", "strength", "agility", "intelligence"]
+    for key in required:
         if key not in character:
             return False
 
-    # write data
     file = open(filename, "w")
-    for key in required_keys:
+    for key in required:
         file.write(f"{key}: {character[key]}\n")
     file.close()
 
@@ -81,8 +78,7 @@ def save_character(character, filename):
 
 def load_character(filename):
     """
-    Load character information from a file and return a dictionary.
-    Returns None if the file cannot be read.
+    Load a character from a file.
     """
     import os
     if not os.path.exists(filename):
@@ -106,7 +102,7 @@ def load_character(filename):
 
 def display_character(character):
     """
-    Display character information neatly.
+    Print character info neatly.
     """
     print("=== CHARACTER SHEET ===")
     print(f"Name: {character['name']}")
@@ -120,12 +116,14 @@ def display_character(character):
 
 if __name__ == "__main__":
     name = input("Enter your character's name: ")
-    character_class = input("Choose your class (Warrior, Mage, Rogue, Cleric): ")
-    new_character = create_character(name, character_class)
+    char_class = input("Choose your class (Warrior, Mage, Rogue, Cleric): ")
 
-    if new_character is None:
-        print("Invalid class entered!")
+    character = create_character(name, char_class)
+
+    if character is None:
+        print("Invalid class entered.")
     else:
-        display_character(new_character)
-        save_character(new_character, "my_character.txt")
-        print("Character saved successfully.")
+        display_character(character)
+        saved = save_character(character, "my_character.txt")
+        if saved:
+            print("Character saved to my_character.txt")
