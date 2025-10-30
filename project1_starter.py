@@ -6,50 +6,43 @@ Date: 10/21/2025
 AI Usage:
 """
 
-def calculate_stats(character_class, level):
-    """
-    Return character stats based on class name and level.
-    Each class has different strengths in strength, agility, and intelligence.
-    """
+def calculate_stats(character_class):
+    """Calculates character stats based on class."""
+    # Base stats
+    stats = {"strength": 0, "agility": 0, "intelligence": 0}
+
+    # Assign stat values depending on class
     if character_class == "Warrior":
-        base = {"strength": 15, "agility": 8, "intelligence": 5}
-    elif character_class == "Mage":
-        base = {"strength": 5, "agility": 10, "intelligence": 15}
+        stats["strength"] = 10
+        stats["agility"] = 5
+        stats["intelligence"] = 3
     elif character_class == "Rogue":
-        base = {"strength": 8, "agility": 15, "intelligence": 7}
-    elif character_class == "Cleric":
-        base = {"strength": 7, "agility": 7, "intelligence": 14}
+        stats["strength"] = 5
+        stats["agility"] = 10
+        stats["intelligence"] = 4
+    elif character_class == "Mage":
+        stats["strength"] = 3
+        stats["agility"] = 4
+        stats["intelligence"] = 10
     else:
-        return None  # invalid class
+        # Invalid class
+        return None
 
-    # increase slightly with level
-    for key in base:
-        base[key] += (level - 1) * 2
-
-    return base
+    return stats
 
 
 def create_character(name, character_class):
-    """
-    Create and return a character dictionary with:
-      - name
-      - class
-      - level
-      - strength, agility, intelligence
-    """
-    level = 1
-    stats = calculate_stats(character_class, level)
-
+    """Creates a new character dictionary."""
+    stats = calculate_stats(character_class)
     if stats is None:
-        return None
+        return None  # invalid class
 
+    # Return a dictionary with expected structure
     character = {
         "name": name,
         "class": character_class,
-        "level": level,
-        "strength": stats["strength"],
-        "agility": stats["agility"],
-        "intelligence": stats["intelligence"]
+        "level": 1,
+        "stats": stats
     }
 
     return character
