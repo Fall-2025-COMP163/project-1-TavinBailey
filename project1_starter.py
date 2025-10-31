@@ -3,7 +3,7 @@ COMP 163 - Project 1: Character Creator & Saving/Loading
 Name: Tavin Bailey
 Date: 10/21/2025
 
-AI Usage:
+AI Usage: AI used to generate the save and load part of the file check errors within my code.
 """
 
 import os # Imports the 'OS' module so we can check if files or folders exist on the computer.
